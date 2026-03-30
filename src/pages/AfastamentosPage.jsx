@@ -1,5 +1,6 @@
 import { useState, useMemo, useEffect } from "react";
-import { listarAfastamentos, aprovarAfastamento, recusarAfastamento, excluirAfastamento } from "../services/firebase";
+import { listarAfastamentos } from "../services/firebase";
+import { aprovarAfastamento, recusarAfastamento, excluirAfastamento } from "../services/api";
 import { enviarNotificacao } from "../services/notificacoes";
 
 const MOTIVOS_RECUSA = [
