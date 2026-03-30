@@ -25,6 +25,7 @@ export default function AfastamentosPage() {
   const [confirmacao, setConfirmacao]   = useState(null);
   const [motivoSelecionado, setMotivoSelecionado] = useState("");
   const [motivoCustom, setMotivoCustom] = useState("");
+  const [zoomFoto, setZoomFoto]         = useState(false);
 
   // Dados em tempo real do Firestore
   useEffect(() => {
@@ -225,6 +226,18 @@ export default function AfastamentosPage() {
         </table>
       </div>
 
+      {/* Modal zoom foto */}
+      {zoomFoto && (
+        <div style={{ position: "fixed", inset: 0, zIndex: 9999, background: "rgba(0,0,0,0.95)", display: "flex", alignItems: "center", justifyContent: "center", cursor: "zoom-out" }}
+          onClick={() => setZoomFoto(false)}>
+          <img src={zoomFoto} alt="Atestado zoom" style={{ maxWidth: "95vw", maxHeight: "95vh", objectFit: "contain", borderRadius: 8 }} />
+          <button onClick={() => setZoomFoto(false)} style={{ position: "absolute", top: 16, right: 16, width: 36, height: 36, borderRadius: "50%", background: "rgba(255,255,255,0.15)", border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2l10 10M12 2L2 12" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"/></svg>
+          </button>
+          <span style={{ position: "absolute", bottom: 20, left: 0, right: 0, textAlign: "center", color: "rgba(255,255,255,0.4)", fontSize: 12 }}>Clique em qualquer lugar para fechar</span>
+        </div>
+      )}
+
       {/* Modal detalhes */}
       {selecionado && (
         <div className="modal-overlay" onClick={() => setSelecionado(null)}>
@@ -237,12 +250,20 @@ export default function AfastamentosPage() {
               {/* Foto com preview rápido */}
               {(selecionado.fotoUrl || selecionado.fotoPreview) ? (
                 <div style={{ position: "relative", marginBottom: 16 }}>
-                  <img
-                    src={selecionado.fotoUrl || selecionado.fotoPreview}
-                    alt="Atestado"
-                    className="foto-atestado"
-                    style={{ filter: selecionado.fotoUrl ? "none" : "blur(2px)", transition: "filter 0.3s" }}
-                  />
+                  <div style={{ position: "relative", cursor: "zoom-in" }} onClick={() => selecionado.fotoUrl && setZoomFoto(selecionado.fotoUrl)}>
+                    <img
+                      src={selecionado.fotoUrl || selecionado.fotoPreview}
+                      alt="Atestado"
+                      className="foto-atestado"
+                      style={{ filter: selecionado.fotoUrl ? "none" : "blur(2px)", transition: "filter 0.3s" }}
+                    />
+                    {selecionado.fotoUrl && (
+                      <div style={{ position: "absolute", top: 8, right: 8, background: "rgba(0,0,0,0.55)", borderRadius: 6, padding: "4px 8px", display: "flex", alignItems: "center", gap: 4 }}>
+                        <svg width="13" height="13" viewBox="0 0 13 13" fill="none"><circle cx="5.5" cy="5.5" r="4" stroke="#fff" strokeWidth="1.3"/><path d="M8.5 8.5l3 3" stroke="#fff" strokeWidth="1.3" strokeLinecap="round"/><path d="M3.5 5.5h4M5.5 3.5v4" stroke="#fff" strokeWidth="1.3" strokeLinecap="round"/></svg>
+                        <span style={{ fontSize: 10, color: "#fff" }}>Zoom</span>
+                      </div>
+                    )}
+                  </div>
                   {!selecionado.fotoUrl && (
                     <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center", background: "rgba(255,255,255,0.6)", borderRadius: 8 }}>
                       <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 6 }}>
@@ -308,7 +329,7 @@ export default function AfastamentosPage() {
               </div>
               <div className="modal-footer">
                 <button className="btn btn-ghost" onClick={() => setConfirmacao(null)}>Cancelar</button>
-                <button className="btn btn-danger" onClick={() => {
+                <button className={`btn ${confirmacao.acao === "aprovar" ? "btn-success" : "btn-danger"}`} onClick={() => {
                   if (confirmacao.acao === "aprovar") aprovar(confirmacao.id);
                   else excluir(confirmacao.id);
                 }}>
