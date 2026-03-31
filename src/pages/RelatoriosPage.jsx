@@ -1,5 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { listarAfastamentosHibrido } from "../services/dados";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
 
 export default function RelatoriosPage() {
   const [dados, setDados]   = useState([]);
@@ -42,6 +44,86 @@ export default function RelatoriosPage() {
     URL.revokeObjectURL(url);
   };
 
+  const exportarPDF = () => {
+    const doc = new jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+    const agora = new Date();
+    const dataHora = `${agora.toLocaleDateString("pt-BR")} às ${agora.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })}`;
+
+    // Cabeçalho azul
+    doc.setFillColor(4, 44, 83);
+    doc.rect(0, 0, 297, 22, "F");
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(14);
+    doc.setFont("helvetica", "bold");
+    doc.text("Verumdoc", 14, 10);
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "normal");
+    doc.text("Relatório de Afastamentos Médicos", 14, 16);
+    doc.setFontSize(8);
+    doc.text(`Gerado em: ${dataHora}`, 220, 10);
+    doc.text(`Total de registros: ${filtrados.length}`, 220, 16);
+
+    // Cards de métricas
+    doc.setTextColor(26, 26, 26);
+    doc.setFontSize(9);
+    doc.setFont("helvetica", "bold");
+    doc.text("RESUMO DO PERÍODO", 14, 32);
+
+    const metricas = [
+      ["Total", filtrados.length],
+      ["Aprovados", aprovados],
+      ["Pendentes", pendentes],
+      ["Recusados", recusados],
+      ["Total de dias", totalDias],
+      ["Taxa de aprovação", `${taxaAprov}%`],
+    ];
+
+    metricas.forEach((m, i) => {
+      const x = 14 + (i * 46);
+      doc.setFillColor(230, 241, 251);
+      doc.roundedRect(x, 35, 42, 14, 2, 2, "F");
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(7);
+      doc.setTextColor(100, 100, 100);
+      doc.text(String(m[0]), x + 4, 40);
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(11);
+      doc.setTextColor(24, 95, 165);
+      doc.text(String(m[1]), x + 4, 47);
+    });
+
+    // Tabela principal
+    autoTable(doc, {
+      startY: 56,
+      head: [["Funcionário", "Matrícula", "Início", "Término", "Dias", "CID", "Médico / CRM", "Status"]],
+      body: filtrados.map(d => [
+        d.nome || "-",
+        d.matricula || "-",
+        d.dataInicio || "-",
+        d.dataFim || "-",
+        String(d.dias || "-"),
+        d.cid || "-",
+        `${d.nomeMedico || "-"} / ${d.crm || "-"}`,
+        (d.status || "-").charAt(0).toUpperCase() + (d.status || "").slice(1),
+      ]),
+      headStyles: { fillColor: [4, 44, 83], textColor: 255, fontSize: 8, fontStyle: "bold" },
+      bodyStyles: { fontSize: 8, textColor: [26, 26, 26] },
+      alternateRowStyles: { fillColor: [247, 247, 245] },
+      columnStyles: { 0: { cellWidth: 45 }, 4: { halign: "center" }, 7: { halign: "center" } },
+    });
+
+    // Rodapé em todas as páginas
+    const totalPages = doc.getNumberOfPages();
+    for (let i = 1; i <= totalPages; i++) {
+      doc.setPage(i);
+      doc.setFontSize(7);
+      doc.setTextColor(150, 150, 150);
+      doc.text(`Verumdoc — verumdoc.com.br — Página ${i} de ${totalPages}`, 14, doc.internal.pageSize.height - 6);
+    }
+
+    doc.save(`relatorio-verumdoc-${agora.toISOString().slice(0, 10)}.pdf`);
+  };
+
   return (
     <div>
       {/* Filtro de período */}
@@ -53,9 +135,13 @@ export default function RelatoriosPage() {
           </button>
         ))}
         <div style={{ flex: 1 }} />
-        <button className="btn btn-primary" onClick={exportarCSV}>
-          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v8M4 6l3 3 3-3M2 11h10" stroke="#fff" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/></svg>
+        <button className="btn btn-ghost" onClick={exportarCSV} style={{ marginRight: 8 }}>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M7 1v8M4 6l3 3 3-3M2 11h10" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round"/></svg>
           Exportar CSV
+        </button>
+        <button className="btn btn-primary" onClick={exportarPDF}>
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M2 2h7l3 3v7a1 1 0 01-1 1H2a1 1 0 01-1-1V3a1 1 0 011-1z" stroke="#fff" strokeWidth="1.2"/><path d="M9 2v3h3M4 7h6M4 9.5h4" stroke="#fff" strokeWidth="1.2" strokeLinecap="round"/></svg>
+          Exportar PDF
         </button>
       </div>
 
