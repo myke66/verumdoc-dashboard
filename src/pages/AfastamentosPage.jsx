@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from "react";
-import { listarAfastamentos, aprovarAfastamento, recusarAfastamento, excluirAfastamento } from "../services/firebase";
+import { listarAfastamentosHibrido, aprovarAfastamentoHibrido, recusarAfastamentoHibrido, excluirAfastamentoHibrido } from "../services/dados";
 import { enviarNotificacao } from "../services/notificacoes";
 
 const MOTIVOS_RECUSA = [
@@ -27,9 +27,8 @@ export default function AfastamentosPage() {
   const [motivoCustom, setMotivoCustom] = useState("");
   const [zoomFoto, setZoomFoto]         = useState(false);
 
-  // Dados em tempo real do Firestore
   useEffect(() => {
-    const unsub = listarAfastamentos((lista) => {
+    const unsub = listarAfastamentosHibrido((lista) => {
       setDados(lista);
       setCarregando(false);
       setCarregou(true);
@@ -47,20 +46,20 @@ export default function AfastamentosPage() {
   }, [dados, busca, filtro]);
 
   const aprovar = async (id) => {
-    await aprovarAfastamento(id);
+    await aprovarAfastamentoHibrido(id);
     await enviarNotificacao(id, "aprovado").catch(() => {});
     setSelecionado(null); setConfirmacao(null);
   };
 
   const recusar = async (id, motivo) => {
-    await recusarAfastamento(id, motivo);
+    await recusarAfastamentoHibrido(id, motivo);
     await enviarNotificacao(id, "recusado").catch(() => {});
     setSelecionado(null); setConfirmacao(null);
     setMotivoSelecionado(""); setMotivoCustom("");
   };
 
   const excluir = async (id) => {
-    await excluirAfastamento(id);
+    await excluirAfastamentoHibrido(id);
     setSelecionado(null); setConfirmacao(null);
   };
 

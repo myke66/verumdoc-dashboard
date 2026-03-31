@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell } from "recharts";
-import { listarAfastamentos } from "../services/firebase";
+import { listarAfastamentosHibrido } from "../services/dados";
 
 const MESES = ["Jan","Fev","Mar","Abr","Mai","Jun","Jul","Ago","Set","Out","Nov","Dez"];
 
@@ -10,7 +10,7 @@ export default function DashboardPage() {
   const [carregou, setCarregou]     = useState(false);
 
   useEffect(() => {
-    const unsub = listarAfastamentos((lista) => {
+    const unsub = listarAfastamentosHibrido((lista) => {
       setDados(lista);
       setCarregando(false);
       setCarregou(true);

@@ -1,12 +1,12 @@
 import { useState, useEffect, useMemo } from "react";
-import { listarAfastamentos } from "../services/firebase";
+import { listarAfastamentosHibrido } from "../services/dados";
 
 export default function RelatoriosPage() {
   const [dados, setDados]   = useState([]);
   const [periodo, setPeriodo] = useState("todos");
 
   useEffect(() => {
-    const unsub = listarAfastamentos(setDados);
+    const unsub = listarAfastamentosHibrido(setDados);
     return unsub;
   }, []);
 
