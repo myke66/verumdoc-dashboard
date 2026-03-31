@@ -42,14 +42,29 @@ export default function App() {
   }, []);
 
   const handleLogin = (dados) => {
-    setUsuario({
-      email:     dados.usuario.email,
-      uid:       dados.usuario.id,
-      nome:      dados.usuario.nome,
-      iniciais:  dados.usuario.nome.slice(0, 2).toUpperCase(),
-      perfil:    dados.usuario.perfil,
-      empresaId: dados.empresa?.id,
-    });
+    if (dados.firebase) {
+      // Usuário legado do Firebase
+      setUsuario({
+        email:     dados.usuario.email,
+        uid:       dados.usuario.id,
+        nome:      dados.usuario.nome,
+        iniciais:  dados.usuario.nome.slice(0, 2).toUpperCase(),
+        perfil:    "rh",
+        empresaId: null,
+        legacy:    true,
+      });
+    } else {
+      // Usuário novo da API
+      setUsuario({
+        email:     dados.usuario.email,
+        uid:       dados.usuario.id,
+        nome:      dados.usuario.nome,
+        iniciais:  dados.usuario.nome.slice(0, 2).toUpperCase(),
+        perfil:    dados.usuario.perfil,
+        empresaId: dados.empresa?.id,
+        legacy:    false,
+      });
+    }
   };
 
   const handleLogout = () => {

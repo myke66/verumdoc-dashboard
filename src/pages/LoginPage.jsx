@@ -1,26 +1,64 @@
 import { useState } from "react";
 import { loginRH } from "../services/api";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { getFirestore, doc, getDoc } from "firebase/firestore";
+import { auth } from "../services/firebase";
 
 export default function LoginPage({ onLogin }) {
-  const [email,   setEmail]   = useState("");
-  const [senha,   setSenha]   = useState("");
+  const [email,    setEmail]    = useState("");
+  const [senha,    setSenha]    = useState("");
   const [verSenha, setVerSenha] = useState(false);
-  const [erro,    setErro]    = useState("");
-  const [loading, setLoading] = useState(false);
+  const [erro,     setErro]     = useState("");
+  const [loading,  setLoading]  = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     if (!email || !senha) { setErro("Preencha todos os campos."); return; }
     setErro(""); setLoading(true);
+
+    // 1. Tenta login pela nova API (usuários novos)
     try {
       const dados = await loginRH(email, senha);
       if (dados.usuario.perfil === "funcionario") {
         setErro("Acesso exclusivo para RH. Use o app mobile.");
         setLoading(false); return;
       }
+      // Marca como usuário da nova API
+      localStorage.setItem("verumdoc-api-v2", "true");
       onLogin(dados);
+      return;
+    } catch {
+      // Se falhar na nova API, tenta Firebase (usuários legados)
+    }
+
+    // 2. Fallback: Firebase Auth (usuários legados)
+    try {
+      const cred   = await signInWithEmailAndPassword(auth, email, senha);
+      const db     = getFirestore();
+      const snap   = await getDoc(doc(db, "usuarios", email));
+      const perfil = snap.exists() ? snap.data() : {};
+
+      if (perfil.perfil !== "rh") {
+        setErro("Acesso exclusivo para RH. Use o app mobile.");
+        setLoading(false); return;
+      }
+
+      // Marca como usuário legado (Firebase)
+      localStorage.removeItem("verumdoc-api-v2");
+      localStorage.removeItem("verumdoc-token");
+
+      onLogin({
+        usuario: {
+          id:     cred.user.uid,
+          nome:   perfil.nome || "RH",
+          email,
+          perfil: "rh",
+        },
+        empresa: { id: null, nome: "" },
+        firebase: true,
+      });
     } catch (err) {
-      setErro(err.message || "E-mail ou senha incorretos.");
+      setErro("E-mail ou senha incorretos.");
     } finally { setLoading(false); }
   };
 
