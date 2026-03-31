@@ -8,7 +8,7 @@ import ConfiguracoesPage from "./pages/ConfiguracoesPage";
 import PerfilPage        from "./pages/PerfilPage";
 import SobrePage         from "./pages/SobrePage";
 import UsuariosPage      from "./pages/UsuariosPage";
-import AuditoriaPage     from "./pages/AuditoriaPage";
+import AuditoriaPage     from "./pages/Auditoriapage";
 import "./styles.css";
 
 export default function App() {
