@@ -23,16 +23,19 @@ const api = async (method, path, body) => {
 export const loginRH = async (email, senha) => {
   const data = await api("POST", "/auth/login", { email, senha });
   localStorage.setItem("verumdoc-token", data.token);
+  localStorage.setItem("verumdoc-api-v2", "true");
   return data;
 };
 
 export const logoutRH = () => {
   localStorage.removeItem("verumdoc-token");
+  localStorage.removeItem("verumdoc-api-v2");
 };
 
 export const cadastrarEmpresa = async (dados) => {
   const data = await api("POST", "/auth/cadastro", dados);
   localStorage.setItem("verumdoc-token", data.token);
+  localStorage.setItem("verumdoc-api-v2", "true");
   return data;
 };
 

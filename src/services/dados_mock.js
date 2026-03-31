@@ -33,9 +33,9 @@ const apiReq = async (method, path, body) => {
 };
 
 // Detecta se empresa usa nova API
+// Empresas que logam pela nova API salvam flag no localStorage
 const usaNovaAPI = () => {
-  const payload = getUsuarioAtual();
-  return payload?.empresaId && payload.empresaId.length === 36; // UUID v4
+  return localStorage.getItem("verumdoc-api-v2") === "true";
 };
 
 // ── Listar afastamentos ───────────────────────────
