@@ -8,6 +8,7 @@ import ConfiguracoesPage from "./pages/ConfiguracoesPage";
 import PerfilPage        from "./pages/PerfilPage";
 import SobrePage         from "./pages/SobrePage";
 import UsuariosPage      from "./pages/UsuariosPage";
+import AuditoriaPage     from "./pages/AuditoriaPage";
 import "./styles.css";
 
 export default function App() {
@@ -95,6 +96,7 @@ export default function App() {
     dashboard:    <DashboardPage usuario={usuario} />,
     afastamentos: <AfastamentosPage usuario={usuario} />,
     relatorios:   <RelatoriosPage usuario={usuario} />,
+    auditoria:    <AuditoriaPage />,
     usuarios:     <UsuariosPage />,
     configuracoes:<ConfiguracoesPage dark={dark} toggleDark={toggleDark} />,
     perfil:       <PerfilPage usuario={usuario} />,
@@ -105,6 +107,7 @@ export default function App() {
     dashboard:    "Dashboard",
     afastamentos: "Afastamentos",
     relatorios:   "Relatórios",
+    auditoria:    "Auditoria",
     usuarios:     "Usuários",
     configuracoes:"Configurações",
     perfil:       "Perfil",
@@ -127,6 +130,7 @@ function Sidebar({ pagina, setPagina, onLogout }) {
     { id: "dashboard",    label: "Dashboard",    icon: <IconDash /> },
     { id: "afastamentos", label: "Afastamentos", icon: <IconList /> },
     { id: "relatorios",   label: "Relatórios",   icon: <IconReport /> },
+    { id: "auditoria",    label: "Auditoria",    icon: <IconAudit /> },
     { id: "usuarios",     label: "Usuários",     icon: <IconUsers /> },
   ];
   const bottom = [
@@ -189,6 +193,7 @@ function Topbar({ titulo, usuario, setPagina }) {
 const IconDash   = () => <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="1" y="1" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.3"/><rect x="9" y="1" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.3"/><rect x="1" y="9" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.3"/><rect x="9" y="9" width="6" height="6" rx="1.5" stroke="currentColor" strokeWidth="1.3"/></svg>;
 const IconList   = () => <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M2 8h12M2 12h8" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>;
 const IconReport = () => <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><rect x="2" y="1" width="12" height="14" rx="2" stroke="currentColor" strokeWidth="1.3"/><path d="M5 5h6M5 8h6M5 11h4" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>;
+const IconAudit  = () => <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M8 1.5L2 4v4c0 3.3 2.5 5.8 6 6.5 3.5-.7 6-3.2 6-6.5V4L8 1.5z" stroke="currentColor" strokeWidth="1.3" strokeLinejoin="round"/><path d="M5.5 8l2 2 3-3" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/></svg>;
 const IconUsers  = () => <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="6" cy="5" r="2.5" stroke="currentColor" strokeWidth="1.3"/><path d="M1 13c0-2.76 2.24-5 5-5s5 2.24 5 5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/><path d="M11 7c1.1 0 2 .9 2 2M13 13c0-1.5-.7-2.8-1.8-3.6" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>;
 const IconConfig = () => <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="2.5" stroke="currentColor" strokeWidth="1.3"/><path d="M8 1v2M8 13v2M1 8h2M13 8h2M3.05 3.05l1.41 1.41M11.54 11.54l1.41 1.41M3.05 12.95l1.41-1.41M11.54 4.46l1.41-1.41" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>;
 const IconPerfil = () => <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="5.5" r="3" stroke="currentColor" strokeWidth="1.3"/><path d="M2 14c0-2.76 2.69-5 6-5s6 2.24 6 5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/></svg>;
