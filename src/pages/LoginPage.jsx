@@ -89,20 +89,28 @@ export default function LoginPage({ onLogin }) {
                 placeholder="••••••••" value={senha} onChange={e => setSenha(e.target.value)}
                 style={{ paddingRight: 44 }} autoComplete="current-password" />
               <button type="button" onClick={() => setVerSenha(!verSenha)}
-                style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "var(--text-3)", fontSize: 16 }}>
-                {verSenha ? "🙈" : "👁️"}
+                style={{ position: "absolute", right: 12, top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", color: "var(--text-3)", display: "flex", alignItems: "center", justifyContent: "center", padding: 4, borderRadius: 4, transition: "color 0.15s" }}
+                onMouseEnter={e => e.currentTarget.style.color = "var(--primary)"}
+                onMouseLeave={e => e.currentTarget.style.color = "var(--text-3)"}>
+                {verSenha ? <EyeOffIcon /> : <EyeIcon />}
               </button>
             </div>
           </div>
 
           {erro && (
-            <div style={{ background: "var(--red-50)", border: "0.5px solid var(--red-400)", borderRadius: 8, padding: "10px 12px" }}>
-              <p style={{ fontSize: 13, color: "var(--red-800)" }}>{erro}</p>
+            <div style={{ background: "var(--red-50)", border: "1px solid #FECACA", borderRadius: 10, padding: "10px 14px", display: "flex", alignItems: "center", gap: 8 }}>
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="7" r="6" stroke="#DC2626" strokeWidth="1.3"/><path d="M7 4.5v3M7 9.5v.5" stroke="#DC2626" strokeWidth="1.3" strokeLinecap="round"/></svg>
+              <p style={{ fontSize: 13, color: "var(--red-400)" }}>{erro}</p>
             </div>
           )}
 
-          <button type="submit" className="btn btn-primary" style={{ height: 44, marginTop: 4 }} disabled={loading}>
-            {loading ? "Entrando..." : "Entrar"}
+          <button type="submit" className="btn btn-primary" style={{ height: 44, marginTop: 4, fontSize: 14, borderRadius: 10 }} disabled={loading}>
+            {loading ? (
+              <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ width: 14, height: 14, border: "2px solid rgba(255,255,255,0.4)", borderTopColor: "#fff", borderRadius: "50%", animation: "spin 0.7s linear infinite", display: "inline-block" }} />
+                Entrando...
+              </span>
+            ) : "Entrar"}
           </button>
         </form>
 
@@ -117,5 +125,26 @@ export default function LoginPage({ onLogin }) {
         </p>
       </div>
     </div>
+  );
+}
+
+// Ícone olho — senha visível
+function EyeIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+      <path d="M1.5 9C1.5 9 4 3.75 9 3.75C14 3.75 16.5 9 16.5 9C16.5 9 14 14.25 9 14.25C4 14.25 1.5 9 1.5 9Z" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+      <circle cx="9" cy="9" r="2.25" stroke="currentColor" strokeWidth="1.3"/>
+    </svg>
+  );
+}
+
+// Ícone olho cortado — senha oculta
+function EyeOffIcon() {
+  return (
+    <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+      <path d="M2.25 2.25L15.75 15.75" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+      <path d="M7.69 7.69A2.25 2.25 0 0010.31 10.31" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round"/>
+      <path d="M5.21 5.21C3.27 6.38 1.5 9 1.5 9C1.5 9 4 14.25 9 14.25c1.47 0 2.79-.5 3.88-1.27M8.18 4.32C8.45 3.77 8.71 3.75 9 3.75c5 0 7.5 5.25 7.5 5.25a14.6 14.6 0 01-1.92 2.82" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
   );
 }

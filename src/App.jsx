@@ -145,13 +145,13 @@ function Sidebar({ pagina, setPagina, onLogout }) {
         </div>
       </div>
       <nav className="sidebar-nav">
-        <p style={{ fontSize: 9, fontWeight: 600, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.08em", padding: "4px 12px 6px" }}>Principal</p>
+        <p className="sidebar-section-label">Principal</p>
         {nav.map(i => (
           <button key={i.id} className={`nav-item ${pagina === i.id ? "active" : ""}`} onClick={() => setPagina(i.id)}>
             {i.icon} {i.label}
           </button>
         ))}
-        <p style={{ fontSize: 9, fontWeight: 600, color: "rgba(255,255,255,0.3)", textTransform: "uppercase", letterSpacing: "0.08em", padding: "16px 12px 6px" }}>Sistema</p>
+        <p className="sidebar-section-label" style={{ marginTop: 8 }}>Sistema</p>
         {bottom.map(i => (
           <button key={i.id} className={`nav-item ${pagina === i.id ? "active" : ""}`} onClick={() => setPagina(i.id)}>
             {i.icon} {i.label}
@@ -159,8 +159,8 @@ function Sidebar({ pagina, setPagina, onLogout }) {
         ))}
       </nav>
       <div className="sidebar-footer">
-        <button className="nav-item" onClick={onLogout} style={{ color: "rgba(255,100,100,0.7)" }}>
-          <IconLogout /> Sair
+        <button className="nav-item danger" onClick={onLogout}>
+          <IconLogout /> Sair da conta
         </button>
       </div>
     </aside>
@@ -172,9 +172,12 @@ function Topbar({ titulo, usuario, setPagina }) {
     <header className="topbar">
       <span className="topbar-title">{titulo}</span>
       <div className="topbar-right">
-        <span style={{ fontSize: 12, color: "var(--text-3)" }}>{usuario?.email}</span>
-        <div className="avatar" style={{ cursor: "pointer" }} onClick={() => setPagina("perfil")} title="Perfil">
-          {usuario?.iniciais || "RH"}
+        <div className="topbar-user" onClick={() => setPagina("perfil")} title="Ir para perfil">
+          <div style={{ textAlign: "right" }}>
+            <div className="topbar-user-name">{usuario?.nome || "RH"}</div>
+            <div className="topbar-user-email">{usuario?.email}</div>
+          </div>
+          <div className="avatar">{usuario?.iniciais || "RH"}</div>
         </div>
       </div>
     </header>
