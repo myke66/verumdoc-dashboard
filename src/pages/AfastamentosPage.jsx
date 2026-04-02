@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { listarAfastamentosHibrido, aprovarAfastamentoHibrido, recusarAfastamentoHibrido, excluirAfastamentoHibrido } from "../services/dados";
 import { enviarNotificacao } from "../services/notificacoes";
 
@@ -26,13 +26,15 @@ export default function AfastamentosPage() {
   const [motivoSelecionado, setMotivoSelecionado] = useState("");
   const [motivoCustom, setMotivoCustom] = useState("");
   const [zoomFoto, setZoomFoto]         = useState(false);
+  const refreshRef = useRef(() => {});
 
   useEffect(() => {
-    const unsub = listarAfastamentosHibrido((lista) => {
+    const { unsub, refresh } = listarAfastamentosHibrido((lista) => {
       setDados(lista);
       setCarregando(false);
       setCarregou(true);
     });
+    refreshRef.current = refresh;
     return unsub;
   }, []);
 
@@ -48,18 +50,21 @@ export default function AfastamentosPage() {
   const aprovar = async (id) => {
     await aprovarAfastamentoHibrido(id);
     await enviarNotificacao(id, "aprovado").catch(() => {});
+    refreshRef.current();
     setSelecionado(null); setConfirmacao(null);
   };
 
   const recusar = async (id, motivo) => {
     await recusarAfastamentoHibrido(id, motivo);
     await enviarNotificacao(id, "recusado").catch(() => {});
+    refreshRef.current();
     setSelecionado(null); setConfirmacao(null);
     setMotivoSelecionado(""); setMotivoCustom("");
   };
 
   const excluir = async (id) => {
     await excluirAfastamentoHibrido(id);
+    refreshRef.current();
     setSelecionado(null); setConfirmacao(null);
   };
 
