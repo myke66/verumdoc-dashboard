@@ -29,12 +29,12 @@ export default function AfastamentosPage() {
   const refreshRef = useRef(() => {});
 
   useEffect(() => {
-    const { unsub, refresh } = listarAfastamentosHibrido((lista) => {
+    const unsub = listarAfastamentosHibrido((lista) => {
       setDados(lista);
       setCarregando(false);
       setCarregou(true);
     });
-    refreshRef.current = refresh;
+    refreshRef.current = unsub.refresh;
     return unsub;
   }, []);
 

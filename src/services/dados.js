@@ -57,12 +57,14 @@ export const listarAfastamentosHibrido = (callback) => {
     const intervalo = setInterval(() => { if (ativo) buscar(); }, 3000);
 
     const unsub = () => { ativo = false; clearInterval(intervalo); };
-    return { unsub, refresh: buscar };
+    unsub.refresh = buscar;
+    return unsub;
   }
 
   // Firebase (tempo real) — sem refresh manual necessário (listener em tempo real)
   const unsub = listarFirebase(callback);
-  return { unsub, refresh: () => {} };
+  unsub.refresh = () => {};
+  return unsub;
 };
 
 // ── Aprovar ───────────────────────────────────────
