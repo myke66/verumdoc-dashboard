@@ -86,19 +86,6 @@ export default function AfastamentosPage() {
     URL.revokeObjectURL(url);
   };
 
-  const fmtData = (s) => {
-    if (!s) return "-";
-    if (s?.toDate) {
-      const d = s.toDate();
-      return `${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}/${d.getFullYear()}`;
-    }
-    if (typeof s === "string" && s.includes("-")) {
-      const [y, m, d] = s.split("-");
-      return `${d}/${m}/${y}`;
-    }
-    return "-";
-  };
-
   const STATUS_MAP = {
     pendente: { label: "Pendente", cls: "badge-pend" },
     aprovado: { label: "Aprovado", cls: "badge-ok"   },

@@ -50,7 +50,8 @@ export const ouvirNotificacoes = (callback) => {
     return onMessage(messaging, (payload) => {
       callback(payload);
     });
-  } catch {
+  } catch (e) {
+    console.warn("Firebase Messaging não disponível:", e);
     return () => {};
   }
 };

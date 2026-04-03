@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 export default function ConfiguracoesPage({ dark, toggleDark }) {
   return (
     <div style={{ maxWidth: 600 }}>
@@ -55,7 +57,7 @@ function Toggle({ value, onChange }) {
 }
 
 function NotifRow({ label, sub, defaultVal, border }) {
-  const [val, setVal] = React.useState(defaultVal);
+  const [val, setVal] = useState(defaultVal);
   return (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "10px 0", borderBottom: border ? "0.5px solid var(--border)" : "none" }}>
       <div>
@@ -76,4 +78,3 @@ function InfoRow({ label, value }) {
   );
 }
 
-import React from "react";

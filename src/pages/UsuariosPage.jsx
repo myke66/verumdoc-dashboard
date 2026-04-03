@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { listarUsuarios, criarUsuario, enviarConvite } from "../services/api";
 
 export default function UsuariosPage() {
@@ -10,9 +10,11 @@ export default function UsuariosPage() {
   const [loading,    setLoading]    = useState(false);
   const [erro,       setErro]       = useState("");
   const [sucesso,    setSucesso]    = useState("");
+  const timersRef = useRef([]);
 
   useEffect(() => {
     carregar();
+    return () => timersRef.current.forEach(clearTimeout);
   }, []);
 
   const carregar = async () => {
@@ -38,7 +40,7 @@ export default function UsuariosPage() {
       setModalAberto(null);
       setForm({ nome: "", email: "", matricula: "", senha: "", perfil: "funcionario" });
       carregar();
-      setTimeout(() => setSucesso(""), 3000);
+      timersRef.current.push(setTimeout(() => setSucesso(""), 3000));
     } catch (e) {
       setErro(e.message);
     } finally { setLoading(false); }
@@ -52,7 +54,7 @@ export default function UsuariosPage() {
       setSucesso(`Convite enviado para ${emailConvite}!`);
       setModalAberto(null);
       setEmailConvite("");
-      setTimeout(() => setSucesso(""), 4000);
+      timersRef.current.push(setTimeout(() => setSucesso(""), 4000));
     } catch (e) {
       setErro(e.message);
     } finally { setLoading(false); }
@@ -117,7 +119,7 @@ export default function UsuariosPage() {
                 <td>
                   <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                     <div style={{ width: 32, height: 32, borderRadius: "50%", background: "var(--blue-50)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 11, fontWeight: 600, color: "var(--blue-600)", flexShrink: 0 }}>
-                      {u.nome.slice(0, 2).toUpperCase()}
+                      {(u.nome || "??").slice(0, 2).toUpperCase()}
                     </div>
                     <div>
                       <div style={{ fontWeight: 500, fontSize: 13 }}>{u.nome}</div>
@@ -137,7 +139,7 @@ export default function UsuariosPage() {
                   </span>
                 </td>
                 <td style={{ fontSize: 12, color: "var(--text-3)" }}>
-                  {new Date(u.criadoEm).toLocaleDateString("pt-BR")}
+                  {u.criadoEm ? new Date(u.criadoEm).toLocaleDateString("pt-BR") : "—"}
                 </td>
               </tr>
             ))}
