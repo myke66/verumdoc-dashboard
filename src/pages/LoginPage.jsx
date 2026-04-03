@@ -104,7 +104,7 @@ export default function LoginPage({ onLogin }) {
             </div>
           )}
 
-          <button type="submit" className="btn btn-primary" style={{ height: 44, marginTop: 4, fontSize: 14, borderRadius: 10 }} disabled={loading}>
+          <button type="submit" className="btn btn-primary" style={{ height: 44, marginTop: 4, fontSize: 14, borderRadius: 10, justifyContent: "center" }} disabled={loading}>
             {loading ? (
               <span style={{ display: "flex", alignItems: "center", gap: 8 }}>
                 <span style={{ width: 14, height: 14, border: "2px solid rgba(255,255,255,0.4)", borderTopColor: "#fff", borderRadius: "50%", animation: "spin 0.7s linear infinite", display: "inline-block" }} />
