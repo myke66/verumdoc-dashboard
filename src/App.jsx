@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { getUsuarioAtual, logoutRH } from "./services/api";
+import { getUsuarioAtual, logoutRH, getStatusPagamento } from "./services/api";
 import LoginPage         from "./pages/LoginPage";
 import DashboardPage     from "./pages/DashboardPage";
 import AfastamentosPage  from "./pages/AfastamentosPage";
@@ -16,6 +16,8 @@ export default function App() {
   const [pagina,   setPagina]   = useState("dashboard");
   const [loading,  setLoading]  = useState(true);
   const [dark,     setDark]     = useState(() => localStorage.getItem("dash-dark") === "true");
+  const [pagamentoBloqueado, setPagamentoBloqueado] = useState(false);
+  const [statusPagamento, setStatusPagamento] = useState(null);
 
   const toggleDark = () => setDark(d => {
     localStorage.setItem("dash-dark", !d);
@@ -44,7 +46,6 @@ export default function App() {
 
   const handleLogin = (dados) => {
     if (dados.firebase) {
-      // Usuário legado do Firebase
       setUsuario({
         email:     dados.usuario.email,
         uid:       dados.usuario.id,
@@ -55,7 +56,6 @@ export default function App() {
         legacy:    true,
       });
     } else {
-      // Usuário novo da API
       setUsuario({
         email:     dados.usuario.email,
         uid:       dados.usuario.id,
@@ -65,6 +65,11 @@ export default function App() {
         empresaId: dados.empresa?.id,
         legacy:    false,
       });
+      // Verificar status de pagamento
+      getStatusPagamento().then(s => {
+        setStatusPagamento(s);
+        if (s?.statusPagamento === "bloqueado") setPagamentoBloqueado(true);
+      }).catch(() => {});
     }
   };
 
@@ -88,6 +93,30 @@ export default function App() {
   }
 
   if (!usuario) return <LoginPage onLogin={handleLogin} />;
+
+  // Tela de pagamento bloqueado
+  if (pagamentoBloqueado) return (
+    <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", background: "var(--gray-50)", padding: 24 }}>
+      <div style={{ background: "#fff", borderRadius: 16, padding: 40, maxWidth: 480, width: "100%", textAlign: "center", border: "1px solid var(--border)", boxShadow: "0 4px 24px rgba(0,0,0,0.08)" }}>
+        <div style={{ width: 64, height: 64, borderRadius: "50%", background: "var(--red-50)", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px", fontSize: 28 }}>🔒</div>
+        <h2 style={{ fontSize: 22, fontWeight: 700, color: "var(--text)", marginBottom: 12 }}>Acesso bloqueado</h2>
+        <p style={{ fontSize: 15, color: "var(--text2)", lineHeight: 1.6, marginBottom: 24 }}>
+          O acesso ao painel foi bloqueado por inadimplência. Regularize seu pagamento para reativar sua conta.
+        </p>
+        <div style={{ background: "var(--gray-50)", borderRadius: 12, padding: 16, marginBottom: 24, textAlign: "left" }}>
+          <p style={{ fontSize: 13, color: "var(--text3)", marginBottom: 4 }}>Plano atual</p>
+          <p style={{ fontSize: 15, fontWeight: 600, color: "var(--text)" }}>{statusPagamento?.plano || "—"}</p>
+        </div>
+        <p style={{ fontSize: 13, color: "var(--text3)", marginBottom: 20 }}>
+          Em caso de dúvidas, entre em contato:<br/>
+          <a href="mailto:contato@verumdoc.com.br" style={{ color: "var(--blue-600)", fontWeight: 600 }}>contato@verumdoc.com.br</a>
+        </p>
+        <button onClick={handleLogout} style={{ background: "none", border: "1px solid var(--border)", borderRadius: 8, padding: "8px 20px", fontSize: 13, cursor: "pointer", color: "var(--text3)" }}>
+          Sair
+        </button>
+      </div>
+    </div>
+  );
 
   const PAGINAS = {
     dashboard:    <DashboardPage usuario={usuario} />,
@@ -116,6 +145,19 @@ export default function App() {
       <Sidebar pagina={pagina} setPagina={setPagina} onLogout={handleLogout} />
       <div className="main">
         <Topbar titulo={TITULOS[pagina]} usuario={usuario} setPagina={setPagina} />
+        {statusPagamento?.statusPagamento === "pendente" && (
+          <div style={{ background: "#FFFBEB", borderBottom: "1px solid #FDE68A", padding: "10px 24px", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+              <span style={{ fontSize: 16 }}>⚠️</span>
+              <span style={{ fontSize: 13, color: "#92400E", fontWeight: 500 }}>
+                Pagamento pendente — Verifique seu e-mail para o boleto da primeira mensalidade.
+              </span>
+            </div>
+            <a href="mailto:contato@verumdoc.com.br" style={{ fontSize: 12, color: "#92400E", fontWeight: 600, textDecoration: "underline", whiteSpace: "nowrap" }}>
+              Precisa de ajuda?
+            </a>
+          </div>
+        )}
         <div className="content">{PAGINAS[pagina]}</div>
       </div>
     </div>

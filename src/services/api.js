@@ -30,6 +30,7 @@ export const loginRH = async (email, senha) => {
 export const logoutRH = () => {
   localStorage.removeItem("verumdoc-token");
   localStorage.removeItem("verumdoc-api-v2");
+  localStorage.removeItem("verumdoc-usuario");
 };
 
 export const cadastrarEmpresa = async (dados) => {
@@ -80,3 +81,7 @@ export const getEmpresa = () =>
 
 export const getMetricas = () =>
   api("GET", "/empresas/minha/metricas");
+
+// ── Pagamentos ────────────────────────────────────
+export const getStatusPagamento = () =>
+  api("GET", "/pagamentos/status");
