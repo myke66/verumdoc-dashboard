@@ -150,7 +150,7 @@ export default function App() {
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               <span style={{ fontSize: 16 }}>⚠️</span>
               <span style={{ fontSize: 13, color: "#92400E", fontWeight: 500 }}>
-                Pagamento pendente — Verifique seu e-mail para o boleto da primeira mensalidade.
+                Pagamento pendente
               </span>
             </div>
             <a href="mailto:contato@verumdoc.com.br" style={{ fontSize: 12, color: "#92400E", fontWeight: 600, textDecoration: "underline", whiteSpace: "nowrap" }}>
